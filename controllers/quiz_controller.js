@@ -191,7 +191,7 @@ exports.check = function (req, res, next) {
 exports.randomplay = function (req, res, next) {
 
     if (!req.session.score) req.session.score = 0;
-    if (!req.session.questions) req.session.questions = [-1];
+    if (!req.session.questions) req.session.questions = [];
 
     models.Quiz.count()
     .then(function(count) {
@@ -231,20 +231,28 @@ exports.randomplay = function (req, res, next) {
     });
 };
 
+
 // GET /quizzes/randomcheck/:quizId
 exports.randomcheck = function (req, res, next) {
 
+	var score = req.session.score; 
     var answer = req.query.answer || "";
 
     var result = answer.toLowerCase().trim() === req.quiz.answer.toLowerCase().trim();
 
     if (result) {
         req.session.score++;
-    }
+        score++;
+    } 
+     else{
+	req.session.score = 0;
+	req.session.questions = [];
+}
 
     res.render('quizzes/randomresult', {
         score: req.session.score,
         result: result,
         answer: answer
     });
+
 };
