@@ -191,16 +191,11 @@ exports.check = function (req, res, next) {
 exports.randomplay = function (req, res, next) {
 
     if (!req.session.score) req.session.score = 0;
-    if (!req.session.questions) req.session.questions = [];
+    if (!req.session.questions) req.session.questions = [-1];
 
-    models.Quiz.count()
-    .then(function(count) {
-
-        return models.Quiz.findAll({
+     models.Quiz.findAll({
             where: { id: { $notIn: req.session.questions } }
         })
-
-    })
     .then(function(quizzes) {
     var quizID = -1;
 
@@ -246,11 +241,11 @@ exports.randomcheck = function (req, res, next) {
     } 
      else{
 	req.session.score = 0;
-	req.session.questions = [];
+	req.session.questions = [-1];
 }
 
     res.render('quizzes/randomresult', {
-        score: req.session.score,
+        score: score,
         result: result,
         answer: answer
     });
